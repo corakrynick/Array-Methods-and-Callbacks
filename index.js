@@ -35,50 +35,37 @@ console.log(thing[0]["Home Team Name"]);
 
 
 /* Task 2: Create a function called  getFinals that takes `data` as an argument and returns an array of objects with only finals data */
+function getFinals(data){
+    return data.filter((item) => item["Stage"] === 'Final');
+}
 
-let getFinals = fifaData.filter(function(item){
-        return item['Stage'] === 'Finals';
-});
-
-console.log(getFinals);
+console.log(getFinals(fifaData));
 
 /* Task 3: Implement a higher-order function called `getYears` that accepts the callback function `getFinals`, and returns an array called `years` containing all of the years in the dataset */
 
 function getYears(callback) {
-const years = fifaData.map(function(element) {
+const years = callback.map(function(element) {
     return element.Year;
 });
-    console.log(years);
+    return years;
 };
 
-getYears(getFinals);
+getYears(getFinals(fifaData));
 
 /* Task 5: Implement a higher-order function called `getWinners`, that accepts the callback function `getFinals()` and determine the winner (home or away) of each `finals` game. Return the name of all winning countries in an array called `winners` */ 
 
-// function getWinners(callback) {
-//     let winners = callback.map(function(item) {
-//         if(callback[item]["Home Team Goals"] > callback[item]["Away Team Goals"]) {
-//             return item["Home Team Goals"];
-//         } else {
-//             return item["Away Team Name"];
-//         }
-//     });
-//     return winners;
-// }
-
-// console.log(getWinners(fifaData));
-
-function getWinners(getFinalsCb) {
-    let winners = getFinals(fifaData).map(function(item) {
-        if (item["Home Team Goals"] > item["Away Team Goals"]){
+function getWinners(callback) {
+    let winners = callback.map(function(item) {
+        if(item["Home Team Goals"] > item["Away Team Goals"]) {
             return item["Home Team Name"];
-        } else if (item["Home Team Goals"] < item["Away Team Goals"]){
+        } else {
             return item["Away Team Name"];
         }
     });
     return winners;
 }
-console.log(getWinners(getFinals));
+
+console.log(getWinners(getFinals(fifaData)));
 
 /* Task 6: Implement a higher-order function called `getWinnersByYear` that accepts the following parameters and returns a set of strings "In {year}, {country} won the world cup!" 
 
@@ -87,40 +74,36 @@ Parameters:
  * callback function getYears
  */
 
-
 function getWinnersByYear(func1, func2){
     const result = [];
-    const winners = func1;
-    const years = func2;
-    for (let i = 0; i<years.length; i++) {
+    let winners = func1(getFinals(fifaData));
+    console.log('win1',winners)
+    let years = func2(getFinals(fifaData));
+    console.log("winnners", years);
+    for (let i = 0; i < winners.length; i++) {
         result.push(`In ${years[i]}, ${winners[i]} won the world cup!`);
     }
     return result;
  }
 
- console.log(getWinnersByYear(getWinners, getYears))
+ console.log(getWinnersByYear(getWinners, getYears));
 
 
 
 /* Task 7: Write a function called `getAverageGoals` that accepts a parameter `data` and returns the the average number of home team goals and away team goals scored per match (Hint: use .reduce and do this in 2 steps) */
 
 function getAverageGoals(data) {
-    const averageGoals = (fifaData.reduce(function(acc, item) {
-        console.log(`${acc}`);
-        console.log(`${item.averageGoals}`);
-         return acc + item.averageGoals;
-    },0));
+    const homeGoals = data.reduce(function(acc, item) {
+         return acc + item["Home Team Goals"];
+    },0);
+
+    const awayGoals = data.reduce(function(acc, item) {
+        return acc + item["Away Team Goals"];
+   },0);
+   return (`Home: ${homeGoals / data.length}, Away: ${awayGoals / data.length}`);
 };
 
 console.log(getAverageGoals(fifaData));
-
-// const totalLandArea = cityData.reduce(function(accumulator, item) {
-//   console.log(`I am the accumulator ${accumulator}`);
-//   console.log(`I am the current value ${item.land_area}`);
-//   return accumulator + item.land_area;
-// },0);
-
-// console.log(`I am the total land area ${totalLandArea}`);
 
 /// STRETCH 🥅 //
 
